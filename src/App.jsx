@@ -322,7 +322,7 @@ function App() {
 
       {/* 页脚 */}
       <footer>
-        <p>图片压缩工具 &copy; {new Date().getFullYear()}</p>
+        <p>图片压缩 &copy; {new Date().getFullYear()}</p>
       </footer>
     </div>
   )
