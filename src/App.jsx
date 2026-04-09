@@ -161,10 +161,14 @@ function App() {
       return
     }
 
+    // 获取原始文件的扩展名
+    const originalExtension = image.file.type.split('/')[1]
+    const extension = originalExtension || 'jpg'
+
     // 创建下载链接
     const link = document.createElement('a')
     link.href = image.compressedUrl
-    link.download = `compressed_${Date.now()}_${Math.floor(Math.random() * 1000)}.jpg`
+    link.download = `compressed_${Date.now()}_${Math.floor(Math.random() * 1000)}.${extension}`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -190,7 +194,10 @@ function App() {
         const image = compressedImages[i]
         const response = await fetch(image.compressedUrl)
         const blob = await response.blob()
-        zip.file(`compressed_image_${i + 1}.jpg`, blob)
+        // 获取原始文件的扩展名
+        const originalExtension = image.file.type.split('/')[1]
+        const extension = originalExtension || 'jpg'
+        zip.file(`compressed_image_${i + 1}.${extension}`, blob)
       }
 
       // 生成ZIP文件并下载
@@ -249,7 +256,7 @@ function App() {
             <line x1="12" y1="15" x2="12" y2="3"/>
           </svg>
           <p>点击或拖放图片到此处</p>
-          <p className="hint">支持批量上传 JPG、PNG、WebP 等图片格式</p>
+          <p className="hint">支持批量上传 JPG、PNG、WebP、GIF 等图片格式</p>
         </div>
       </div>
 
