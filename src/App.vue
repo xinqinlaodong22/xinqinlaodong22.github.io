@@ -67,7 +67,7 @@
           </div>
           <p class="file-size">压缩后大小: {{ formatFileSize(image.compressedSize) }}</p>
           <p class="compression-ratio">
-            压缩率: {{ parseFloat(((1 - image.compressedSize / image.originalSize) * 100).toFixed(2)) }}%
+            压缩率: {{ Math.max(0, parseFloat(((1 - image.compressedSize / image.originalSize) * 100).toFixed(2))) }}%
           </p>
           <button 
             class="download-btn"
