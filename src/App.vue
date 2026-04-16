@@ -215,16 +215,16 @@ export default {
           // 转换为blob
           // 检测原始图片类型，保持透明背景
           let outputType = 'image/jpeg'
-          let quality = 0.8 // 提高质量以确保图片不模糊
+          let quality = 0.9 // 提高质量，避免过度压缩导致图片模糊
           
           // 对于PNG和WebP格式，处理透明背景
           if (image.file.type === 'image/png') {
             // 对于PNG图片，使用WebP格式可以获得更好的压缩效果同时保持透明度
             outputType = 'image/webp'
-            quality = 0.8 // 提高质量以确保图片不模糊
+            quality = 0.9 // 提高质量，避免过度压缩导致图片模糊
           } else if (image.file.type === 'image/webp') {
             outputType = image.file.type
-            quality = 0.8 // 提高质量以确保图片不模糊
+            quality = 0.9 // 提高质量，避免过度压缩导致图片模糊
           }
           
           canvas.toBlob(
@@ -285,7 +285,7 @@ export default {
                     }
                   },
                   'image/jpeg',
-                  0.8 // 提高质量以确保图片不模糊
+                  0.9 // 提高质量，避免过度压缩导致图片模糊
                 )
               }
             },
