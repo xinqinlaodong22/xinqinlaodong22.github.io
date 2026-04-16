@@ -98,6 +98,7 @@ function App() {
         quality: 0.6, // 压缩质量
         maxWidth: 1920, // 最大宽度
         maxHeight: 1080, // 最大高度
+        convertSize: 1024000, // 超过1MB的图片自动转换为JPG格式
         success: (result) => {
           // 计算压缩后的文件大小
           const compressedBlob = result
