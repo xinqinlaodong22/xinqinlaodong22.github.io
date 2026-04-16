@@ -215,47 +215,77 @@ export default {
           // 转换为blob
           // 检测原始图片类型，保持透明背景
           let outputType = 'image/jpeg'
-          let quality = 0.6
+          let quality = 0.8 // 提高质量以确保图片不模糊
           
           // 对于PNG和WebP格式，处理透明背景
           if (image.file.type === 'image/png') {
             // 对于PNG图片，使用WebP格式可以获得更好的压缩效果同时保持透明度
             outputType = 'image/webp'
-            quality = 0.6 // 对于内容密集型PNG，使用更低的质量以获得更好的压缩效果
+            quality = 0.8 // 提高质量以确保图片不模糊
           } else if (image.file.type === 'image/webp') {
             outputType = image.file.type
-            quality = 0.6 // 对于WebP，也使用较低的质量以获得更好的压缩效果
+            quality = 0.8 // 提高质量以确保图片不模糊
           }
           
           canvas.toBlob(
             (blob) => {
               if (blob) {
-                // 更新图片状态
-                this.images[index] = {
-                  ...this.images[index],
-                  compressedUrl: URL.createObjectURL(blob),
-                  compressedSize: blob.size,
-                  isCompressed: true
+                // 确保压缩后的图片大小小于原图
+                if (blob.size < image.originalSize) {
+                  // 更新图片状态
+                  this.images[index] = {
+                    ...this.images[index],
+                    compressedUrl: URL.createObjectURL(blob),
+                    compressedSize: blob.size,
+                    isCompressed: true
+                  }
+                  resolve()
+                } else {
+                  // 如果压缩后大小不小于原图，使用原图
+                  this.images[index] = {
+                    ...this.images[index],
+                    compressedUrl: image.originalUrl,
+                    compressedSize: image.originalSize,
+                    isCompressed: true
+                  }
+                  resolve()
                 }
-                resolve()
               } else {
                 // 如果转换失败，尝试使用JPEG格式作为备选
                 canvas.toBlob(
                   (jpegBlob) => {
                     if (jpegBlob) {
-                      this.images[index] = {
-                        ...this.images[index],
-                        compressedUrl: URL.createObjectURL(jpegBlob),
-                        compressedSize: jpegBlob.size,
-                        isCompressed: true
+                      // 确保压缩后的图片大小小于原图
+                      if (jpegBlob.size < image.originalSize) {
+                        this.images[index] = {
+                          ...this.images[index],
+                          compressedUrl: URL.createObjectURL(jpegBlob),
+                          compressedSize: jpegBlob.size,
+                          isCompressed: true
+                        }
+                      } else {
+                        // 如果压缩后大小不小于原图，使用原图
+                        this.images[index] = {
+                          ...this.images[index],
+                          compressedUrl: image.originalUrl,
+                          compressedSize: image.originalSize,
+                          isCompressed: true
+                        }
                       }
                       resolve()
                     } else {
-                      reject(new Error('压缩失败'))
+                      // 如果所有转换都失败，使用原图
+                      this.images[index] = {
+                        ...this.images[index],
+                        compressedUrl: image.originalUrl,
+                        compressedSize: image.originalSize,
+                        isCompressed: true
+                      }
+                      resolve()
                     }
                   },
                   'image/jpeg',
-                  0.6
+                  0.8 // 提高质量以确保图片不模糊
                 )
               }
             },
