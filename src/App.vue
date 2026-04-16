@@ -67,7 +67,7 @@
           </div>
           <p class="file-size">压缩后大小: {{ formatFileSize(image.compressedSize) }}</p>
           <p class="compression-ratio">
-            压缩率: {{ Math.max(0, parseFloat(((1 - image.compressedSize / image.originalSize) * 100).toFixed(2))) }}%
+            压缩率: {{ parseFloat(((1 - image.compressedSize / image.originalSize) * 100).toFixed(2)) }}%
           </p>
           <button 
             class="download-btn"
@@ -209,46 +209,35 @@ export default {
           // 绘制图片
           ctx.drawImage(img, 0, 0, width, height)
 
-          // 检测原始图片格式
-          let outputFormat = 'image/jpeg'
+          // 转换为blob
+          // 检测原始图片类型，保持透明背景
+          let outputType = 'image/jpeg'
           let quality = 0.6
           
           // 对于PNG和WebP格式，保持原始格式以支持透明背景
           if (image.file.type === 'image/png' || image.file.type === 'image/webp') {
-            outputFormat = image.file.type
-            quality = 0.8 // PNG和WebP可以使用更高的质量
-          }
-
-          // 转换为blob，确保压缩后的文件大小小于原始文件
-          const compressWithQuality = (currentQuality) => {
-            canvas.toBlob(
-              (blob) => {
-                if (blob) {
-                  // 检查压缩后的大小是否小于原始大小
-                  if (blob.size < image.originalSize || currentQuality <= 0.1) {
-                    // 更新图片状态
-                    this.images[index] = {
-                      ...this.images[index],
-                      compressedUrl: URL.createObjectURL(blob),
-                      compressedSize: blob.size,
-                      isCompressed: true
-                    }
-                    resolve()
-                  } else {
-                    // 降低质量再次尝试
-                    compressWithQuality(Math.max(0.1, currentQuality - 0.1))
-                  }
-                } else {
-                  reject(new Error('压缩失败'))
-                }
-              },
-              outputFormat, // 使用检测到的格式
-              currentQuality // 当前质量参数
-            )
+            outputType = image.file.type
+            quality = 0.8 // 对于PNG和WebP，使用更高的质量
           }
           
-          // 开始压缩
-          compressWithQuality(quality)
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                // 更新图片状态
+                this.images[index] = {
+                  ...this.images[index],
+                  compressedUrl: URL.createObjectURL(blob),
+                  compressedSize: blob.size,
+                  isCompressed: true
+                }
+                resolve()
+              } else {
+                reject(new Error('压缩失败'))
+              }
+            },
+            outputType, // 使用适当的输出格式
+            quality // 压缩质量
+          )
         }
 
         img.onerror = () => {
