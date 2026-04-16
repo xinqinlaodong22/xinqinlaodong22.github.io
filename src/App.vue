@@ -87,8 +87,10 @@
 </template>
 
 <script>
-import JSZip from 'jszip'
-
+/**
+ * 图片压缩应用主组件
+ * 支持批量上传、压缩和下载图片
+ */
 export default {
   name: 'App',
   data() {
@@ -354,14 +356,15 @@ export default {
 </script>
 
 <style scoped>
-/* 样式内容保持不变 */
+/* 应用主样式 */
 .app {
-  max-width: 1900px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
 }
 
+/* 标题样式 */
 .title {
   color: #000;
   font-size: 20px;
@@ -370,6 +373,7 @@ export default {
   margin-bottom: 30px;
 }
 
+/* 拖放区域样式 */
 .drop-zone {
   border: 2px dashed #ccc;
   border-radius: 8px;
@@ -410,6 +414,7 @@ export default {
   color: #666;
 }
 
+/* 控制按钮区域样式 */
 .controls {
   margin: 30px 0;
   text-align: center;
@@ -447,13 +452,15 @@ export default {
   background-color: #0b7dda;
 }
 
+/* 预览容器样式 */
 .preview-container {
   margin-top: 30px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 20px;
 }
 
+/* 预览项样式 */
 .preview-item {
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -473,6 +480,7 @@ export default {
   align-self: center;
 }
 
+/* 图片包装器样式 */
 .image-wrapper {
   margin: 15px 0;
 }
@@ -485,12 +493,14 @@ export default {
   border-radius: 4px;
 }
 
+/* 文件大小样式 */
 .file-size {
   font-size: 14px;
   color: #666;
   margin: 5px 0;
 }
 
+/* 压缩率样式 */
 .compression-ratio {
   font-size: 14px;
   color: #4CAF50;
@@ -498,6 +508,7 @@ export default {
   margin: 5px 0;
 }
 
+/* 页脚样式 */
 footer {
   margin-top: 50px;
   text-align: center;
