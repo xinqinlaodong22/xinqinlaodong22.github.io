@@ -186,7 +186,7 @@ function App() {
     const hours = String(now.getHours()).padStart(2, '0')
     const minutes = String(now.getMinutes()).padStart(2, '0')
     const seconds = String(now.getSeconds()).padStart(2, '0')
-    return `${year}年${month}月${day}日：${hours}时${minutes}分${seconds}秒`
+    return `${year}年${month}月${day}日${hours}时${minutes}分${seconds}秒`
   }
 
   /**
