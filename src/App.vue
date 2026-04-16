@@ -209,6 +209,16 @@ export default {
           // 绘制图片
           ctx.drawImage(img, 0, 0, width, height)
 
+          // 检测原始图片格式
+          let outputFormat = 'image/jpeg'
+          let quality = 0.6
+          
+          // 对于PNG和WebP格式，保持原始格式以支持透明背景
+          if (image.file.type === 'image/png' || image.file.type === 'image/webp') {
+            outputFormat = image.file.type
+            quality = 0.8 // PNG和WebP可以使用更高的质量
+          }
+
           // 转换为blob
           canvas.toBlob(
             (blob) => {
@@ -225,8 +235,8 @@ export default {
                 reject(new Error('压缩失败'))
               }
             },
-            'image/jpeg', // 转换为JPG格式以获得更好的压缩效果
-            0.6 // 压缩质量
+            outputFormat, // 使用检测到的格式
+            quality // 根据格式调整质量
           )
         }
 
