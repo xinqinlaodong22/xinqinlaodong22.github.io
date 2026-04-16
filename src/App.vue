@@ -206,6 +206,9 @@ export default {
           canvas.width = width
           canvas.height = height
 
+          // 确保canvas处理透明背景
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+
           // 绘制图片
           ctx.drawImage(img, 0, 0, width, height)
 
@@ -214,10 +217,14 @@ export default {
           let outputType = 'image/jpeg'
           let quality = 0.6
           
-          // 对于PNG和WebP格式，保持原始格式以支持透明背景
-          if (image.file.type === 'image/png' || image.file.type === 'image/webp') {
+          // 对于PNG和WebP格式，处理透明背景
+          if (image.file.type === 'image/png') {
+            // 对于PNG图片，使用WebP格式可以获得更好的压缩效果同时保持透明度
+            outputType = 'image/webp'
+            quality = 0.6 // 对于内容密集型PNG，使用更低的质量以获得更好的压缩效果
+          } else if (image.file.type === 'image/webp') {
             outputType = image.file.type
-            quality = 0.8 // 对于PNG和WebP，使用更高的质量
+            quality = 0.6 // 对于WebP，也使用较低的质量以获得更好的压缩效果
           }
           
           canvas.toBlob(
@@ -232,7 +239,24 @@ export default {
                 }
                 resolve()
               } else {
-                reject(new Error('压缩失败'))
+                // 如果转换失败，尝试使用JPEG格式作为备选
+                canvas.toBlob(
+                  (jpegBlob) => {
+                    if (jpegBlob) {
+                      this.images[index] = {
+                        ...this.images[index],
+                        compressedUrl: URL.createObjectURL(jpegBlob),
+                        compressedSize: jpegBlob.size,
+                        isCompressed: true
+                      }
+                      resolve()
+                    } else {
+                      reject(new Error('压缩失败'))
+                    }
+                  },
+                  'image/jpeg',
+                  0.6
+                )
               }
             },
             outputType, // 使用适当的输出格式
