@@ -175,6 +175,21 @@ function App() {
   }
 
   /**
+   * 格式化日期时间
+   * @returns {string} 格式化后的日期时间字符串
+   */
+  const formatDateTime = () => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    const seconds = String(now.getSeconds()).padStart(2, '0')
+    return `${year}年${month}月${day}日：${hours}时${minutes}分${seconds}秒`
+  }
+
+  /**
    * 下载所有压缩后的图片到一个ZIP文件夹
    */
   const downloadAllImages = async () => {
@@ -194,17 +209,15 @@ function App() {
         const image = compressedImages[i]
         const response = await fetch(image.compressedUrl)
         const blob = await response.blob()
-        // 获取原始文件的扩展名
-        const originalExtension = image.file.type.split('/')[1]
-        const extension = originalExtension || 'jpg'
-        zip.file(`compressed_image_${i + 1}.${extension}`, blob)
+        // 使用原始文件名
+        zip.file(image.file.name, blob)
       }
 
       // 生成ZIP文件并下载
       zip.generateAsync({ type: 'blob' }).then((content) => {
         const link = document.createElement('a')
         link.href = URL.createObjectURL(content)
-        link.download = `compressed_images_${Date.now()}.zip`
+        link.download = `press_image${formatDateTime()}.zip`
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
