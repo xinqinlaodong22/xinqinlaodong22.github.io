@@ -219,25 +219,36 @@ export default {
             quality = 0.8 // PNG和WebP可以使用更高的质量
           }
 
-          // 转换为blob
-          canvas.toBlob(
-            (blob) => {
-              if (blob) {
-                // 更新图片状态
-                this.images[index] = {
-                  ...this.images[index],
-                  compressedUrl: URL.createObjectURL(blob),
-                  compressedSize: blob.size,
-                  isCompressed: true
+          // 转换为blob，确保压缩后的文件大小小于原始文件
+          const compressWithQuality = (currentQuality) => {
+            canvas.toBlob(
+              (blob) => {
+                if (blob) {
+                  // 检查压缩后的大小是否小于原始大小
+                  if (blob.size < image.originalSize || currentQuality <= 0.1) {
+                    // 更新图片状态
+                    this.images[index] = {
+                      ...this.images[index],
+                      compressedUrl: URL.createObjectURL(blob),
+                      compressedSize: blob.size,
+                      isCompressed: true
+                    }
+                    resolve()
+                  } else {
+                    // 降低质量再次尝试
+                    compressWithQuality(Math.max(0.1, currentQuality - 0.1))
+                  }
+                } else {
+                  reject(new Error('压缩失败'))
                 }
-                resolve()
-              } else {
-                reject(new Error('压缩失败'))
-              }
-            },
-            outputFormat, // 使用检测到的格式
-            quality // 根据格式调整质量
-          )
+              },
+              outputFormat, // 使用检测到的格式
+              currentQuality // 当前质量参数
+            )
+          }
+          
+          // 开始压缩
+          compressWithQuality(quality)
         }
 
         img.onerror = () => {
