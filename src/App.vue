@@ -356,7 +356,7 @@ export default {
 <style scoped>
 /* 样式内容保持不变 */
 .app {
-  max-width: 1200px;
+  max-width: 1900px;
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
@@ -450,7 +450,7 @@ export default {
 .preview-container {
   margin-top: 30px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
 }
 
@@ -459,6 +459,18 @@ export default {
   border-radius: 8px;
   padding: 20px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+}
+
+.preview-item > *:not(.download-btn) {
+  flex: 1;
+}
+
+.preview-item .download-btn {
+  margin-top: 20px;
+  align-self: center;
 }
 
 .image-wrapper {
